@@ -1,0 +1,48 @@
+import React, { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Calendar, MapPin, Hand } from 'lucide-react';
+import { format } from 'date-fns';
+import ItemDetailDialog from './ItemDetailDialog';
+
+const statusColors = {
+  available: 'bg-green-100 text-green-700 border-green-200',
+  claimed: 'bg-amber-100 text-amber-700 border-amber-200',
+  returned: 'bg-blue-100 text-blue-700 border-blue-200',
+};
+
+export default function ItemCard({ item }) {
+  const [detailOpen, setDetailOpen] = useState(false);
+
+  return (
+    <>
+      <Card
+        className="group overflow-hidden hover:shadow-lg transition-all duration-300 border-border/60 cursor-pointer"
+        onClick={() => setDetailOpen(true)}
+      >
+        <div className="aspect-[4/3] overflow-hidden bg-muted relative">
+          {item.photo_front ? (
+            <img
+              src={item.photo_front}
+              alt={item.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+              No Photo
+            </div>
+          )}
+          <Badge className={`absolute top-3 right-3 ${statusColors[item.status] || statusColors.available} border text-xs`}>
+            {item.status || 'available'}
+          </Badge>
+        </div>
+        <CardContent className="p-4 space-y-3">
+          <div>
+            <h3 className="font-heading font-semibold text-base line-clamp-1">{item.title}</h3>
+            <Badge variant="outline" className="mt-1.5 text-xs font-normal">
+              {item.category}
+            </Badge>
+          </div>
+
+          <p className

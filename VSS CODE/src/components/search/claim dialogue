@@ -1,0 +1,167 @@
+import React, { useState } from 'react';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
+import { Loader2, CheckCircle2 } from 'lucide-react';
+
+const INITIAL = {
+  student_name: '',
+  student_id: '',
+  student_email: '',
+  grade_level: '',
+  program: '',
+};
+
+export default function ClaimDialog({ open, onOpenChange, item }) {
+  const [form, setForm] = useState(INITIAL);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    await base44.entities.Claim.create({
+      ...form,
+      item_id: item.id,
+      status: 'pending',
+    });
+
+    // Send confirmation email
+    await base44.integrations.Core.SendEmail({
+      to: form.student_email,
+      subject: `Claim Submitted — ${item.title}`,
+      body: `Hi ${form.student_name},\n\nYour claim for "${item.title}" has been submitted successfully. An administrator will review your claim and follow up with you.\n\nItem: ${item.title}\nCategory: ${item.category}\nDate Found: ${item.date_found}\n\nThank you!`,
+    });
+
+    setSubmitting(false);
+    setSubmitted(true);
+  };
+
+  const handleClose = () => {
+    onOpenChange(false);
+    setTimeout(() => {
+      setForm(INITIAL);
+      setSubmitted(false);
+    }, 300);
+  };
+
+  if (!item) return null;
+
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-lg">
+        {submitted ? (
+          <div className="py-8 text-center space-y-4">
+            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-8 h-8 text-green-600" />
+            </div>
+            <div>
+              <h3 className="font-heading font-bold text-xl">Claim Submitted!</h3>
+              <p className="text-muted-foreground mt-1 text-sm">
+                A confirmation email has been sent to {form.student_email}. An admin will review your claim shortly.
+              </p>
+            </div>
+            <Button onClick={handleClose}>Close</Button>
+          </div>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle className="font-heading">Claim: {item.title}</DialogTitle>
+              <DialogDescription>
+                Fill out the form below to claim this item. You'll receive a confirmation email.
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4 mt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="student_name">Full Name *</Label>
+                  <Input
+                    id="student_name"
+                    placeholder="First & Last Name"
+                    value={form.student_name}
+                    onChange={(e) => handleChange('student_name', e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="student_id">Student ID # *</Label>
+                  <Input
+                    id="student_id"
+                    placeholder="e.g. 123456"
+                    value={form.student_id}
+                    onChange={(e) => handleChange('student_id', e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="student_email">Student Email *</Label>
+                <Input
+                  id="student_email"
+                  type="email"
+                  placeholder="you@school.edu"
+                  value={form.student_email}
+                  onChange={(e) => handleChange('student_email', e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label>Grade Level *</Label>
+                  <Select
+                    value={form.grade_level}
+                    onValueChange={(v) => handleChange('grade_level', v)}
+                    required
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select grade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="9th">9th Grade</SelectItem>
+                      <SelectItem value="10th">10th Grade</SelectItem>
+                      <SelectItem value="11th">11th Grade</SelectItem>
+                      <SelectItem value="12th">12th Grade</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="program">Program *</Label>
+                  <Input
+                    id="program"
+                    placeholder="e.g. Engineering"
+                    value={form.program}
+                    onChange={(e) => handleChange('program', e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <DialogFooter className="pt-2">
+                <Button type="button" variant="outline" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={submitting} className="gap-2">
+                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Submit Claim
+                </Button>
+              </DialogFooter>
+            </form>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}

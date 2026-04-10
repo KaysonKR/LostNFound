@@ -1,0 +1,58 @@
+{
+  "name": "Claim",
+  "type": "object",
+  "properties": {
+    "item_id": {
+      "type": "string",
+      "description": "ID of the lost item being claimed"
+    },
+    "student_name": {
+      "type": "string",
+      "description": "Student first and last name"
+    },
+    "student_id": {
+      "type": "string",
+      "description": "Student ID number"
+    },
+    "student_email": {
+      "type": "string",
+      "description": "Student email address"
+    },
+    "grade_level": {
+      "type": "string",
+      "enum": [
+        "9th",
+        "10th",
+        "11th",
+        "12th"
+      ],
+      "description": "Grade level"
+    },
+    "program": {
+      "type": "string",
+      "description": "Student program or department"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending",
+      "description": "Claim review status"
+    },
+    "admin_notes": {
+      "type": "string",
+      "description": "Notes from admin review"
+    }
+  },
+  "required": [
+    "item_id",
+    "student_name",
+    "student_id",
+    "student_email",
+    "grade_level",
+    "program"
+  ]
+}

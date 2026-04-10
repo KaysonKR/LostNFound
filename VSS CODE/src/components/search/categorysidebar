@@ -1,0 +1,48 @@
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Shirt, Footprints, Package, Droplets,
+  GlassWater, Glasses, Key, HelpCircle, LayoutGrid
+} from 'lucide-react';
+
+const CATEGORIES = [
+  { value: 'all', label: 'All Items', icon: LayoutGrid },
+  { value: 'Jacket/Outerwear', label: 'Jacket / Outerwear', icon: Shirt },
+  { value: 'Pants/Shorts', label: 'Pants / Shorts', icon: Shirt },
+  { value: 'Shoes', label: 'Shoes', icon: Footprints },
+  { value: 'Shirts', label: 'Shirts', icon: Shirt },
+  { value: 'Lunchbox', label: 'Lunchbox', icon: Package },
+  { value: 'Backpack', label: 'Backpack', icon: Package },
+  { value: 'Water Bottles', label: 'Water Bottles', icon: GlassWater },
+  { value: 'Accessories', label: 'Accessories', icon: Glasses },
+  { value: 'Private Belonging', label: 'Private Belonging', icon: Key },
+  { value: 'Others', label: 'Others', icon: HelpCircle },
+];
+
+export default function CategorySidebar({ selected, onSelect }) {
+  return (
+    <div className="w-full">
+      <h3 className="font-heading font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3 px-2">
+        Categories
+      </h3>
+      <ScrollArea className="h-auto max-h-[70vh]">
+        <div className="space-y-1">
+          {CATEGORIES.map((cat) => (
+            <Button
+              key={cat.value}
+              variant={selected === cat.value ? 'default' : 'ghost'}
+              className="w-full justify-start gap-2.5 text-sm h-10"
+              onClick={() => onSelect(cat.value)}
+            >
+              <cat.icon className="w-4 h-4 shrink-0" />
+              {cat.label}
+            </Button>
+          ))}
+        </div>
+      </ScrollArea>
+    </div>
+  );
+}
+
+export { CATEGORIES };

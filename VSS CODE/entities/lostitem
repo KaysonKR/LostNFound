@@ -1,0 +1,67 @@
+{
+  "name": "LostItem",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Short title for the item"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Jacket/Outerwear",
+        "Pants/Shorts",
+        "Shoes",
+        "Shirts",
+        "Lunchbox",
+        "Backpack",
+        "Water Bottles",
+        "Accessories",
+        "Private Belonging",
+        "Others"
+      ],
+      "description": "Category of the lost item"
+    },
+    "date_found": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the item was found or turned in"
+    },
+    "physical_description": {
+      "type": "string",
+      "description": "Physical properties and description of the item"
+    },
+    "photo_front": {
+      "type": "string",
+      "description": "URL of the front photo"
+    },
+    "photo_back": {
+      "type": "string",
+      "description": "URL of the back photo"
+    },
+    "photo_side": {
+      "type": "string",
+      "description": "URL of the side photo (optional)"
+    },
+    "location_found": {
+      "type": "string",
+      "description": "Where the item was found"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "available",
+        "claimed",
+        "returned"
+      ],
+      "default": "available",
+      "description": "Current status of the item"
+    }
+  },
+  "required": [
+    "title",
+    "category",
+    "date_found",
+    "physical_description"
+  ]
+}

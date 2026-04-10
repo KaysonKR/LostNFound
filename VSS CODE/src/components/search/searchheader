@@ -1,0 +1,22 @@
+import React from 'react';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
+
+export default function SearchHeader({ query, onQueryChange, resultCount }) {
+  return (
+    <div className="space-y-3">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder="Search by name, description, or location..."
+          className="pl-10 h-11 bg-card"
+          value={query}
+          onChange={(e) => onQueryChange(e.target.value)}
+        />
+      </div>
+      <p className="text-sm text-muted-foreground">
+        {resultCount} item{resultCount !== 1 ? 's' : ''} found
+      </p>
+    </div>
+  );
+}

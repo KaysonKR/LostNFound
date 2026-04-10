@@ -1,0 +1,48 @@
+import React, { useState } from 'react';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+} from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Calendar, MapPin, Hand, Tag } from 'lucide-react';
+import { format } from 'date-fns';
+import ClaimDialog from './ClaimDialog';
+
+const statusColors = {
+  available: 'bg-green-100 text-green-700 border-green-200',
+  claimed: 'bg-amber-100 text-amber-700 border-amber-200',
+  returned: 'bg-blue-100 text-blue-700 border-blue-200',
+};
+
+export default function ItemDetailDialog({ item, open, onOpenChange }) {
+  const [claimOpen, setClaimOpen] = useState(false);
+
+  if (!item) return null;
+
+  const photos = [item.photo_front, item.photo_back, item.photo_side].filter(Boolean);
+  const [activePhoto, setActivePhoto] = useState(0);
+
+  return (
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-heading text-xl">{item.title}</DialogTitle>
+          </DialogHeader>
+
+          <div className="grid sm:grid-cols-2 gap-5 mt-2">
+            {/* Photos */}
+            <div className="space-y-2">
+              <div className="aspect-[4/3] rounded-xl overflow-hidden bg-muted">
+                {photos.length > 0 ? (
+                  <img
+                    src={photos[activePhoto]}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+                    No photo available
+                  </div>
+                )}
+              </div>
